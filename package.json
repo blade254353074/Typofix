@@ -1,0 +1,26 @@
+{
+  "name": "typofix",
+  "version": "0.0.1",
+  "description": "Typofix makes repositories' typo fixed",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blade254353074/Typofix.git"
+  },
+  "keywords": [
+    "typofix"
+  ],
+  "author": "blade254353074 <blade254353074@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blade254353074/Typofix/issues"
+  },
+  "homepage": "https://github.com/blade254353074/Typofix#readme",
+  "dependencies": {
+    "github": "^6.0.1",
+    "node-scrapy": "^0.3.0"
+  }
+}
