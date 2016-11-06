@@ -1,3 +1,4 @@
+const fs = require('fs-extra')
 const url = require('url')
 const GitHubApi = require('github')
 const scrapy = require('node-scrapy')
@@ -18,41 +19,50 @@ const github = new GitHubApi({
 //     console.log(res)
 //   })
 
-scrapy.scrape(
-  'https://github.com/search?q=%E7%99%BB%E9%99%86&type=Repositories&utf8=%E2%9C%93',
-  '.public.source > .d-inline-block a',
-  function (err, data) {
-    if (err) return console.error(err)
-    console.log(data)
-  }
-)
-
-function getUrl (q, page) {
+function getSearchUrl (q, page) {
   return url.format({
     protocol: 'https:',
     slashes: true,
     host: 'github.com',
     pathname: '/search',
     query: {
-      q: encodeURIComponent(q),
-      page: encodeURIComponent(page),
-      type: 'Repositories',
-      utf8: encodeURIComponent('✓')
+      q,
+      ref: 'searchresults',
+      p: page,
+      type: 'Code',
+      utf8: '✓',
     }
   })
 }
 
 function searchCode (q, page) {
-  const url = getUrl(q, page)
+  const url = getSearchUrl(q, page)
+  // supported selectors - https://github.com/fb55/css-select
+  const model = {
+    repos: '.code-list-item > .title > a:first-child',
+    count: '.menu-item.selected > .counter',
+    page: '.pagination > .current',
+    next: '.pagination > *:last-child'
+  }
+  const options = {
+    requestOptions: {
+      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.59 Safari/537.36'
+    }
+  }
 
   return new Promise(function (resolve, reject) {
-    return scrapy.scrape(
-      'https://github.com/search?q=%E7%99%BB%E9%99%86&type=Repositories&utf8=%E2%9C%93',
-      '.public.source > .d-inline-block a',
-      function (err, data) {
-        if (err) return console.error(err)
-        console.log(data)
-      }
-    )
+    console.log(url)
+    scrapy.scrape(url, model, function (err, data) {
+      if (err) return reject(err)
+      resolve(data)
+    })
   })
 }
+
+searchCode('登陆', 1)
+  .then(function (data) {
+    console.log(data)
+  })
+  .catch(function (err) {
+    console.error(err)
+  })
